@@ -3,6 +3,11 @@ from flask import Flask
 app = Flask(__name__)
 
 
+@app.route('/')
+def main() -> str:
+    return '<p>Миссия Колонизация Марса</p>'
+
+
 @app.route('/index')
 def index() -> str:
     return '<p>И на Марсе будут яблони цвести!</p>'
