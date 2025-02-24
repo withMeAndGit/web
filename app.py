@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from crypt import methods
+
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -25,6 +27,21 @@ def image_mars() -> str:
 @app.route('/promotion_image')
 def promotion_image() -> str:
     return render_template('promotion_image.html')
+
+
+@app.route('/astronaut_selection', methods=['GET', 'POST'])
+def astronaut_selection() -> str:
+    if request.method == 'GET':
+        return render_template('astronaut_selection.html')
+    elif request.method == 'POST':
+        print(f'''Имя: {request.form['surname']}
+Фамилия: {request.form['name']}
+email: {request.form['email']}
+Профессия: {request.form['profession']}
+Пол: {request.form['gender']}
+Мотивация: {request.form['motivation']}
+Готовность: {request.form['ready']}''')
+        return '<p>Анкета отправлена</p>'
 
 
 if __name__ == '__main__':

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Отбор астронавтов</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <h1>Анкета претендента</h1>
+            <h2>на участие в миссии</h2>
+            <form method="post" action="astronaut_selection">
+                <div><input type="text" class="form-control" placeholder="Введите фамилию" name="surname"></div>
+                <div class="mb-3"><input type="text" class="form-control" placeholder="Введите имя" name="name"></div>
+                <div class="mb-3"><input type="email" class="form-control" placeholder="Введите адрес почты"
+                                         name="email"></div>
+                <div class="mb-3">
+                    <p>Образование</p>
+                    <select class="form-select" name="education">
+                        <option value="Начальное">Начальное</option>
+                        <option value="Среднее">Среднее</option>
+                        <option value="Высшее">Высшее</option>
+                        <option value="Кандидат наук">Кандидат наук</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <p>Профессии</p>
+                    <div class="form-check">
+                        <input type="checkbox" value="Инженер" class="form-check-input" name="profession" id="chbx1">
+                        <label class="form-check-label" for="chbx1">Инженер</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" value="Пилот" class="form-check-input" name="profession" id="chbx2">
+                        <label class="form-check-label" for="chbx2">Пилот</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" value="Строитель" class="form-check-input" name="profession" id="chbx3">
+                        <label class="form-check-label" for="chbx3">Строитель</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" value="Врач" class="form-check-input" name="profession" id="chbx4">
+                        <label class="form-check-label" for="chbx4">Врач</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" value="Климатолог" class="form-check-input" name="profession" id="chbx5">
+                        <label class="form-check-label" for="chbx5">Климатолог</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" value="Метеоролог" class="form-check-input" name="profession" id="chbx6">
+                        <label class="form-check-label" for="chbx6">Метеоролог</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p>Пол</p>
+                    <div class="form-check">
+                        <input type="radio" value="Мужской" name="gender" id="male" class="form-check-input">
+                        <label class="form-check-label" for="male">Мужской</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" value="Мужской" name="gender" id="female" class="form-check-input">
+                        <label class="form-check-label" for="female">Женский</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <p>Мотивация</p>
+                    <textarea class="form-control" name="motivation"></textarea>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" value="Готов" class="form-check-input" id="ready" name="ready">
+                    <label class="form-check-label" for="ready">Готовы ли остаться на Марсе?</label>
+                </div>
+                <div class="mb-3">
+                    <input type="submit" value="Отправить анкету" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+</html>
