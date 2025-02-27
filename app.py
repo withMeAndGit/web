@@ -14,6 +14,13 @@ def index(title: str) -> str:
                            title=title)
 
 
+@app.route('/training/<prof>')
+def training(prof: str) -> str:
+    context = {
+        'prof': prof
+    }
+    return render_template('training.html', **context)
+
 
 @app.route('/promotion')
 def promotion() -> str:
