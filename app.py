@@ -55,19 +55,26 @@ def promotion_image() -> str:
     return render_template('promotion_image.html')
 
 
-@app.route('/astronaut_selection', methods=['GET', 'POST'])
+@app.route('/astronaut_selection')
 def astronaut_selection() -> str:
-    if request.method == 'GET':
-        return render_template('astronaut_selection.html')
-    elif request.method == 'POST':
-        print(f'''Имя: {request.form['surname']}
-Фамилия: {request.form['name']}
-email: {request.form['email']}
-Профессия: {request.form['profession']}
-Пол: {request.form['gender']}
-Мотивация: {request.form['motivation']}
-Готовность: {request.form['ready']}''')
-        return '<p>Анкета отправлена</p>'
+    return render_template('astronaut_selection.html')
+
+
+@app.route('/answer', methods=['POST'])
+@app.route('/auto_answer', methods=['POST'])
+def answer():
+    context = {
+        'title': 'Анкета',
+        'surname': request.form['surname'],
+        'name': request.form['name'],
+        'education': request.form['education'],
+        'profession': ', '.join(request.form.getlist('profession')),
+        'gender': request.form['gender'],
+        'motivation': request.form['motivation'],
+        'ready': bool(request.form.get('ready'))
+    }
+
+    return render_template('auto_answer.html', **context)
 
 
 if __name__ == '__main__':
