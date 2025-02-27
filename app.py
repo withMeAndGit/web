@@ -3,9 +3,16 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 
-@app.route('/index')
-def index() -> str:
-    return '<p>И на Марсе будут яблони цвести!</p>'
+@app.route('/')
+def main() -> str:
+    return render_template('base.html')
+
+
+@app.route('/index/<title>')
+def index(title: str) -> str:
+    return render_template('base.html',
+                           title=title)
+
 
 
 @app.route('/promotion')
