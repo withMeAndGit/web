@@ -22,6 +22,20 @@ def training(prof: str) -> str:
     return render_template('training.html', **context)
 
 
+@app.route('/list_prof/<list_>')
+def list_prof(list_: str) -> str:
+    context = {
+        'list': list_,
+        'profs': ['инженер-исследователь', 'пилот', 'строитель', 'экзобиолог',
+                  'врач', 'инженер по терраформированию', 'климатолог',
+                  'специалист по радиационной защите', 'астрогеолог',
+                  'гляциолог', 'инженер жизнеобеспечения', 'метеоролог',
+                  'оператор марсохода', 'киберинженер', 'штурман', 'пилот дронов']
+    }
+
+    return render_template('list_prof.html', **context)
+
+
 @app.route('/promotion')
 def promotion() -> str:
     return '''<p>Человечество вырастает из детства.<br><br>
