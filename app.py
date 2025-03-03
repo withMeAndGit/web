@@ -1,6 +1,27 @@
+from crypt import methods
+
 from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from werkzeug import Response
+from werkzeug.utils import redirect
+
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
+
+from config import SECRET_KEY
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = SECRET_KEY
+
+
+class LoginForm(FlaskForm):
+    astronaut_id = StringField('ID астронавта', validators=[DataRequired()])
+    astronaut_password = PasswordField('Пароль астронавта', validators=[DataRequired()])
+
+    capitan_id = StringField('ID капитана', validators=[DataRequired()])
+    capitan_password = PasswordField('Пароль капитана', validators=[DataRequired()])
+
+    access = SubmitField('Доступ')
 
 
 @app.route('/')
@@ -16,10 +37,7 @@ def index(title: str) -> str:
 
 @app.route('/training/<prof>')
 def training(prof: str) -> str:
-    context = {
-        'prof': prof
-    }
-    return render_template('training.html', **context)
+    return render_template('training.html', prof=prof)
 
 
 @app.route('/list_prof/<list_>')
@@ -62,7 +80,7 @@ def astronaut_selection() -> str:
 
 @app.route('/answer', methods=['POST'])
 @app.route('/auto_answer', methods=['POST'])
-def answer():
+def answer() -> str:
     context = {
         'title': 'Анкета',
         'surname': request.form['surname'],
@@ -75,6 +93,15 @@ def answer():
     }
 
     return render_template('auto_answer.html', **context)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login() -> str | Response:
+    form = LoginForm()
+    if request.method == 'GET':
+        return render_template('login.html', form=form)
+    if form.validate_on_submit():
+        return redirect('/')
 
 
 if __name__ == '__main__':

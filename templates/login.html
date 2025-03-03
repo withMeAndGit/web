@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1><img src="{{ url_for('static', filename='images/emblem_mars.png') }}"> Аварийный доступ</h1>
+<form action="/login" method="POST">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    <label class="form-label" for="astronaut_id">{{ form.astronaut_id.label }}</label>
+    {{ form.astronaut_id(class='form-control', id='astronaut_id') }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="astronaut_password">{{ form.astronaut_password.label }}</label>
+    {{ form.astronaut_password(class='form-control', id='astronaut_password') }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="capitan_id">{{ form.capitan_id.label }}</label>
+    {{ form.capitan_id(class='form-control', id='capitan_id') }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="capitan_password">{{ form.capitan_password.label }}</label>
+    {{ form.capitan_password(class='form-control', id='capitan_password') }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.access(class='btn btn-primary') }}
+  </div>
+</form>
+{% endblock %}
