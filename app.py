@@ -1,5 +1,3 @@
-from crypt import methods
-
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from werkzeug import Response
@@ -7,6 +5,8 @@ from werkzeug.utils import redirect
 
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+
+from data import db_session
 
 from config import SECRET_KEY
 
@@ -105,4 +105,5 @@ def login() -> str | Response:
 
 
 if __name__ == '__main__':
+    db_session.global_init('database/mars_explorer.db')
     app.run(host='127.0.0.1', port=8080)
