@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 
 from data import db_session
+from data.jobs import Jobs
 
 from config import SECRET_KEY
 
@@ -26,7 +27,9 @@ class LoginForm(FlaskForm):
 
 @app.route('/')
 def main() -> str:
-    return render_template('base.html')
+    session = db_session.create_session()
+
+    return render_template('index.html', jobs=session.query(Jobs).all())
 
 
 @app.route('/index/<title>')

@@ -1,5 +1,6 @@
 import sqlalchemy
 from sqlalchemy import orm
+from sqlalchemy.orm.collections import collection
 
 from .db_session import SqlAlchemyBase
 
@@ -16,3 +17,7 @@ class Jobs(SqlAlchemyBase):
     start_date = sqlalchemy.Column(sqlalchemy.DateTime)
     end_date = sqlalchemy.Column(sqlalchemy.DateTime)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean)
+
+    def __repr__(self) -> str:
+        return (f'{self.id}, {self.team_leader}, {self.job}, {self.user}, {self.work_size}, {self.collaborators}, '
+                f'{self.start_date}, {self.end_date}, {self.is_finished}')
