@@ -1,28 +1,57 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, make_response, session
 from flask_wtf import FlaskForm
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+
 from werkzeug import Response
 from werkzeug.utils import redirect
 
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import EmailField, PasswordField, SubmitField, BooleanField, StringField
 from wtforms.validators import DataRequired
 
 from data import db_session
+from data.users import User
 from data.jobs import Jobs
+
+import datetime
 
 from config import SECRET_KEY
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 
 class LoginForm(FlaskForm):
-    astronaut_id = StringField('ID астронавта', validators=[DataRequired()])
-    astronaut_password = PasswordField('Пароль астронавта', validators=[DataRequired()])
+    email = EmailField('Почта', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
 
-    capitan_id = StringField('ID капитана', validators=[DataRequired()])
-    capitan_password = PasswordField('Пароль капитана', validators=[DataRequired()])
 
-    access = SubmitField('Доступ')
+class JobsForm(FlaskForm):
+    title = StringField('Job Title')
+    team_leader = StringField('Team Leader id')
+    work_size = StringField('Work Size')
+    collaborators = StringField('Collaborators')
+    finished = BooleanField('Is job finished?')
+    submit = SubmitField('Submit')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 @app.route('/')
@@ -30,6 +59,24 @@ def main() -> str:
     session = db_session.create_session()
 
     return render_template('index.html', jobs=session.query(Jobs).all())
+
+
+@app.route('/jobs',  methods=['GET', 'POST'])
+@login_required
+def jobs() -> str | Response:
+    form = JobsForm()
+    if form.validate_on_submit():
+        sess = db_session.create_session()
+        job = Jobs()
+        job.job = form.title.data
+        job.team_leader = form.team_leader.data
+        job.work_size = form.work_size.data
+        job.is_finished = form.finished.data
+        current_user.jobs.append(job)
+        sess.merge(current_user)
+        sess.commit()
+        return redirect('/')
+    return render_template('jobs.html', form=form)
 
 
 @app.route('/index/<title>')
@@ -99,14 +146,44 @@ def answer() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login() -> str | Response:
+def login():
     form = LoginForm()
-    if request.method == 'GET':
-        return render_template('login.html', form=form)
     if form.validate_on_submit():
-        return redirect('/')
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/cookie')
+def cookie() -> Response:
+    visits_count = int(request.cookies.get("visits_count", 0))
+    if visits_count:
+        res = make_response(
+            f"Вы пришли на эту страницу {visits_count + 1} раз")
+        res.set_cookie("visits_count", str(visits_count + 1),
+                       max_age=60 * 60 * 24 * 365 * 2)
+    else:
+        res = make_response(
+            "Вы пришли на эту страницу в первый раз за последние 2 года")
+        res.set_cookie("visits_count", '1',
+                       max_age=60 * 60 * 24 * 365 * 2)
+    return res
+
+
+@app.route("/session_test")
+def session_test():
+    visits_count = session.get('visits_count', 0)
+    session['visits_count'] = visits_count + 1
+    return make_response(
+        f"Вы пришли на эту страницу {visits_count + 1} раз")
 
 
 if __name__ == '__main__':
     db_session.global_init('database/mars_explorer.db')
-    app.run(host='127.0.0.1', port=8080)
+    app.run(host='127.0.0.1', port=5555)
