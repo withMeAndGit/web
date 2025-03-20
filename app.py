@@ -12,6 +12,8 @@ from data import db_session
 from data.users import User
 from data.jobs import Jobs
 
+from jobs_api import blueprint
+
 import datetime
 
 from config import SECRET_KEY
@@ -146,7 +148,7 @@ def answer() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login() -> str:
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -186,4 +188,5 @@ def session_test():
 
 if __name__ == '__main__':
     db_session.global_init('database/mars_explorer.db')
+    app.register_blueprint(blueprint)
     app.run(host='127.0.0.1', port=5555)
