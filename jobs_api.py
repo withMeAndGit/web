@@ -13,7 +13,7 @@ blueprint = Blueprint('jobs_api', __name__, template_folder='templates')
 @blueprint.route('/api/jobs')
 def get_jobs() -> Response:
     session = db_session.create_session()
-    jobs_list: list[Jobs] = session.query(Jobs).all()
+    jobs_list: list[type[Jobs]] = session.query(Jobs).all()
 
     return jsonify({
         'jobs': [job.to_dict() for job in jobs_list]
@@ -24,7 +24,7 @@ def get_jobs() -> Response:
 def get_job(_id: int) -> Response:
     try:
         session = db_session.create_session()
-        jobs_list: list = session.query(Jobs).where(Jobs.id == _id).one()
+        jobs_list: type[Jobs] = session.query(Jobs).where(Jobs.id == _id).one()
 
         return jobs_list.to_dict()
     

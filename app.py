@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, make_response, session
+from flask_restful import Api
 from flask_wtf import FlaskForm
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
@@ -13,6 +14,7 @@ from data.users import User
 from data.jobs import Jobs
 
 from jobs_api import blueprint
+from users_resource import UserResource, UserListResource
 
 import datetime
 
@@ -22,6 +24,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
+
+api = Api(app)
+api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
+api.add_resource(UserListResource, '/api/v2/users')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
