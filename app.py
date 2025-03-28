@@ -38,6 +38,12 @@ def training(prof: str) -> str:
     return render_template('training.html', prof=prof)
 
 
+@app.route('/distribution')
+def distribution() -> str:
+    return render_template('distribution.html', names=('Ридли Скот', 'Энди Уир', 'Марк Уотни',
+                                                       'Венката Капур', 'Тедди Сандерс', 'Шон Бин'))
+
+
 @app.route('/list_prof/<list_>')
 def list_prof(list_: str) -> str:
     context = {
