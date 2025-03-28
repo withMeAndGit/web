@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Пейзажи марса</h1>
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            {% for image in images %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}" style="background: #555555">
+                    <img src="{{ url_for('static', filename='images/gallery/' + image) }}" class="d-block w-50"
+                         alt="...">
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <form class="upload_from" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="file" class="form-label">Добавить картинку</label>
+            <input type="file" id="file" class="form-control" name="file">
+        </div>
+        <div class="mb-3">
+            <img src="{{ url_for('static', filename='images/loaded_image.png') }}" alt="">
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+{% endblock %}

@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from werkzeug import Response
@@ -5,6 +7,9 @@ from werkzeug.utils import redirect
 
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+
+import random
+import string
 
 from config import SECRET_KEY
 
@@ -65,6 +70,16 @@ def promotion() -> str:
 Мы сделаем обитаемыми безжизненные пока планеты.<br><br>
 И начнем с Марса!<br><br>
 Присоединяйся!</p>'''
+
+
+@app.route('/galery', methods=['GET', 'POST'])
+def galery() -> str:
+    if request.method == 'POST':
+        file = request.files['file']
+        with open(f'static/images/gallery/{"".join(random.choices(string.ascii_letters + string.digits, k=15))}.png',
+                  'wb') as f:
+            f.write(file.read())
+    return render_template('galery.html', images=os.listdir('static/images/gallery'))
 
 
 @app.route('/image_mars')
