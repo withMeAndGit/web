@@ -43,6 +43,14 @@ def results(nickname: str, level: float, rating: float) -> str:
     return render_template('results.html', **data)
 
 
+@app.route('/load_photo', methods=['GET', 'POST'])
+def load_photo() -> str:
+    if request.method == 'POST':
+        file = request.files['file']
+        with open('static/images/loaded_image.png', 'wb') as f:
+            f.write(file.read())
+    return render_template('load_photo.html')
+
 @app.route('/astronaut_selection', methods=['GET', 'POST'])
 def astronaut_selection() -> str:
     if request.method == 'GET':
