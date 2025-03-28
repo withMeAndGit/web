@@ -1,5 +1,3 @@
-from crypt import methods
-
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
 from werkzeug import Response
