@@ -32,6 +32,17 @@ def choice(planet_name: str) -> str:
     return render_template('planet_choice.html', planet_name=planet_name)
 
 
+@app.route('/results/<nickname>/<int:level>/<float:rating>')
+def results(nickname: str, level: float, rating: float) -> str:
+    data = {
+        'nickname': nickname,
+        'level': level,
+        'rating': rating
+    }
+
+    return render_template('results.html', **data)
+
+
 @app.route('/astronaut_selection', methods=['GET', 'POST'])
 def astronaut_selection() -> str:
     if request.method == 'GET':
