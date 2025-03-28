@@ -51,6 +51,11 @@ def load_photo() -> str:
             f.write(file.read())
     return render_template('load_photo.html')
 
+
+@app.route('/carousel')
+def carousel() -> str:
+    return render_template('carousel.html')
+
 @app.route('/astronaut_selection', methods=['GET', 'POST'])
 def astronaut_selection() -> str:
     if request.method == 'GET':
