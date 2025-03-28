@@ -27,6 +27,11 @@ def promotion_image() -> str:
     return render_template('promotion_image.html')
 
 
+@app.route('/choice/<planet_name>')
+def choice(planet_name: str) -> str:
+    return render_template('planet_choice.html', planet_name=planet_name)
+
+
 @app.route('/astronaut_selection', methods=['GET', 'POST'])
 def astronaut_selection() -> str:
     if request.method == 'GET':
