@@ -15,11 +15,13 @@ from data.jobs import Jobs
 
 from jobs_api import blueprint
 from users_resource import UserResource, UserListResource
+from jobs_resource import JobResource, JobListResource
 
 import datetime
 
 from config import SECRET_KEY
 
+db_session.global_init('database/mars_explorer.db')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -28,6 +30,8 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 api = Api(app)
 api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
 api.add_resource(UserListResource, '/api/v2/users')
+api.add_resource(JobResource, '/api/v2/jobs/<int:job_id>')
+api.add_resource(JobListResource, '/api/v2/jobs')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -154,7 +158,7 @@ def answer() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login() -> str:
+def login() -> str | Response:
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()

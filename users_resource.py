@@ -33,6 +33,7 @@ def abort_if_user_not_found(user_id: int) -> None:
 
 # /api/users/<id: int>
 class UserResource(Resource):
+    @staticmethod
     def get(self, user_id: int) -> Response:
         abort_if_user_not_found(user_id)
 
@@ -43,7 +44,7 @@ class UserResource(Resource):
             user.to_dict(only=USERS_COLUMNS),
         )
 
-
+    @staticmethod
     def delete(self, user_id: int) -> Response:
         abort_if_user_not_found(user_id)
 
@@ -56,7 +57,8 @@ class UserResource(Resource):
 
 
 class UserListResource(Resource):
-    def get(self) -> Response:
+    @staticmethod
+    def get() -> Response:
         session = db_session.create_session()
         users: list[type[User]] = session.query(User).all()
 
@@ -67,6 +69,7 @@ class UserListResource(Resource):
             ) for user in users]
         )
 
+    @staticmethod
     def post(self) -> Response:
         args: dict = parser.parse_args()
         session = db_session.create_session()
