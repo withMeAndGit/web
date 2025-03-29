@@ -2,43 +2,38 @@
 
 {% block content %}
     <div>
-        <a href="/jobs" class="btn btn-secondary">Back to Jobs</a>
+        <a href="/" class="btn btn-secondary">Back to Jobs</a>
         {% if current_user.is_authenticated %}
-            <a href="/jobs" class="btn btn-secondary">Add Department/a>
+            <a href="/departments/add" class="btn btn-secondary">Add Department</a>
         {% endif %}
-        <h2>Works log</h2>
-        {% for el in departments %}
-            <h3>Action # {{ job.id }}</h3>
-            <table class="table">
-                <tr class="table-secondary">
-                    <td>Title of activity
-                    <td>Team leader
-                    <td>Duration
-                    <td>List of collaborations
-                    <td>Is finished
-                </tr>
-                <tr>
-                    <td class="table-primary">{{ el.chief }}
-                    <td class="table-primary">{{ el.user.surname }} {{ el.user.name }}
-                    <td class="table-primary">{{ el.members }}
-                    <td class="table-primary">{{ job.collaborators }}
-                        {% if job.is_finished %}
-                            <td class="table-success">{{ job.is_finished }}
-                                {% else %}
-                            <td class="table-danger">{{ job.is_finished }}
-                        {% endif %}
-                </tr>
-            </table>
-            {% if current_user.is_authenticated and (current_user == job.user or current_user.id == 1) %}
-                <div>
-                    <a href="/jobs/edit/{{ job.id }}" class="btn btn-warning">
-                        Изменить
-                    </a>
-                    <a href="/jobs/delete/{{ job.id }}" class="btn btn-danger">
-                        Удалить
-                    </a>
-                </div>
-            {% endif %}
-        {% endfor %}
+    </div>
+    <h2>Departments log</h2>
+    {% for el in departments %}
+        <h3>Action # {{ el.id }}</h3>
+        <table class="table">
+            <tr class="table-secondary">
+                <td>Title of department
+                <td>Chief
+                <td>Members
+                <td>Department email
+            </tr>
+            <tr>
+                <td class="table-primary">{{ el.title }}
+                <td class="table-primary">{{ el.user.surname }} {{ el.user.name }}
+                <td class="table-primary">{{ el.members }}
+                <td class="table-primary">{{ el.email }}
+            </tr>
+        </table>
+        {% if current_user.is_authenticated and (current_user == el.user or current_user.id == 1) %}
+            <div>
+                <a href="/departments/edit/{{ el.id }}" class="btn btn-warning">
+                    Изменить
+                </a>
+                <a href="/departments/delete/{{ el.id }}" class="btn btn-danger">
+                    Удалить
+                </a>
+            </div>
+        {% endif %}
+    {% endfor %}
 
 {% endblock %}

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% if current_user.is_authenticated %}
-        <div>
+    <div>
+        <a href="/departments" class="btn btn-secondary">go to Department</a>
+        {% if current_user.is_authenticated %}
             <a href="/jobs" class="btn btn-secondary">Add Job</a>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
     <h2>Works log</h2>
     {% for job in jobs %}
         <h3>Action # {{ job.id }}</h3>
