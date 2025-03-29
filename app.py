@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, make_response, session
+from flask_restful import abort
 from flask_wtf import FlaskForm
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from sqlalchemy.sql.operators import or_
 
 from werkzeug import Response
 from werkzeug.utils import redirect
@@ -18,6 +20,7 @@ import datetime
 
 from config import SECRET_KEY
 
+db_session.global_init('database/mars_explorer.db')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -63,7 +66,7 @@ def main() -> str:
     return render_template('index.html', jobs=session.query(Jobs).all())
 
 
-@app.route('/jobs',  methods=['GET', 'POST'])
+@app.route('/jobs', methods=['GET', 'POST'])
 @login_required
 def jobs() -> str | Response:
     form = JobsForm()
@@ -79,6 +82,51 @@ def jobs() -> str | Response:
         sess.commit()
         return redirect('/')
     return render_template('jobs.html', form=form)
+
+
+@app.route('/jobs/edit/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(job_id: int) -> str | Response:
+    form = JobsForm()
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        job: type[Jobs] = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                                     or_(current_user == Jobs.user, current_user.id == 1)).first()
+        if not job:
+            abort(404)
+
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job: type[Jobs] = db_sess.query(Jobs).filter(Jobs.id == job_id,
+                                                     or_(current_user == Jobs.user, current_user.id == 1)).first()
+
+        if job:
+            job.job = form.title.data
+            job.team_leader = form.team_leader.data
+            job.work_size = form.work_size.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+
+    return render_template('jobs.html', form=form)
+
+
+@app.route('/jobs/delete/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def delete_job(job_id: int) -> str | Response:
+    db_sess = db_session.create_session()
+    job: type[Jobs] = db_sess.query(Jobs).filter(Jobs.id == job_id).filter(
+        or_(current_user.id == 1, bool(current_user == Jobs.user))).first()
+
+    if not job:
+        abort(404)
+
+    db_sess.delete(job)
+    db_sess.commit()
+    return redirect('/')
 
 
 @app.route('/index/<title>')
@@ -148,7 +196,7 @@ def answer() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login() -> str:
+def login() -> Response | str:
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
