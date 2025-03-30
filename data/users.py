@@ -2,6 +2,7 @@ import sqlalchemy
 from sqlalchemy import orm
 
 from flask_login import UserMixin
+from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .db_session import SqlAlchemyBase
@@ -9,7 +10,7 @@ from .db_session import SqlAlchemyBase
 from datetime import datetime
 
 
-class User(SqlAlchemyBase, UserMixin):
+class User(SqlAlchemyBase, SerializerMixin, UserMixin):
     __tablename__ = 'users'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -20,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin):
     speciality = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     address = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     email = sqlalchemy.Column(sqlalchemy.String, nullable=False, unique=True)
+    city_from = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False, default=datetime.now)
     jobs = orm.relationship('Jobs', back_populates='user')

@@ -1,3 +1,5 @@
+import base64
+
 from flask import Flask, render_template, request, make_response, session
 from flask_restful import abort
 from flask_wtf import FlaskForm
@@ -15,13 +17,16 @@ from data.departments import Department
 from data.users import User
 from data.jobs import Jobs
 
-from jobs_api import blueprint
+import jobs_api
+import users_api
 
 import datetime
+import requests
 
-from config import SECRET_KEY
+import io
 
-db_session.global_init('database/mars_explorer.db')
+from config import SECRET_KEY, YANDEX_GEOCODER_API_KEY, YANDEX_STATIC_API_KEY
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -277,6 +282,44 @@ def answer() -> str:
     return render_template('auto_answer.html', **context)
 
 
+@app.route('/users_show/<int:user_id>')
+def show_user(user_id: int) -> str:
+    response = users_api.get_user(user_id)
+    if response.status_code != 200:
+        abort(404)
+    town, name, surname = response.json['city_from'], response.json['name'], response.json['surname']
+
+    params = {
+        'apikey': YANDEX_GEOCODER_API_KEY,
+        'geocode': town,
+        'format': 'json'
+    }
+    response = requests.get('https://geocode-maps.yandex.ru/v1/', params=params)
+    if response.status_code != 200:
+        abort(503)
+    point = response.json()['response']['GeoObjectCollection']['featureMember']\
+        [0]['GeoObject']['Point']['pos'].split()
+
+    params = {
+        'apikey': YANDEX_STATIC_API_KEY,
+        'll': ','.join(point),
+        'spn': '25,0'
+    }
+    response = requests.get('https://static-maps.yandex.ru/v1', params=params)
+    if response.status_code != 200:
+        abort(503)
+
+    data = {
+        'name': name,
+        'surname': surname,
+        'town': town,
+        'image': base64.b64encode(response.content).decode('ascii')
+    }
+    return render_template('users_show.html', **data)
+
+
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login() -> Response | str:
     form = LoginForm()
@@ -318,5 +361,7 @@ def session_test():
 
 if __name__ == '__main__':
     db_session.global_init('database/mars_explorer.db')
-    app.register_blueprint(blueprint)
-    app.run(host='127.0.0.1', port=5555)
+    app.register_blueprint(jobs_api.blueprint)
+    app.register_blueprint(users_api.blueprint)
+
+    app.run(host='127.0.0.1', port=5000)
