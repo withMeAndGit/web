@@ -313,6 +313,7 @@ def show_user(user_id: int) -> str:
         'name': name,
         'surname': surname,
         'town': town,
+        'title': f'{town} {surname} {name}',
         'image': base64.b64encode(response.content).decode('ascii')
     }
     return render_template('users_show.html', **data)
